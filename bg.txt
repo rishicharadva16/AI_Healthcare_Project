@@ -1,0 +1,4 @@
+bg 
+taskbar interactive
+website name and logo theme based 
+display  info about normal symtoms and disease 

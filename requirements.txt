@@ -1,0 +1,12 @@
+streamlit
+pandas
+numpy
+joblib
+matplotlib
+openai
+scikit-learn
+Pillow
+SpeechRecognition
+PyAudio
+pyaudio
+deep-translator

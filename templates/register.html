@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthAI - Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url("{{ url_for('static', filename='images/login_bg.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.4);
+            z-index: -1;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .app-logo {
+            font-size: 3rem;
+            color: #0d9488;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <i class="fa-solid fa-heart-pulse app-logo"></i>
+        <h1 style="margin-bottom: 0.5rem; font-size: 1.5rem;">Create Account</h1>
+        <p style="color: #6b7280; margin-bottom: 2rem;">Join our AI-powered healthcare network</p>
+
+        {% if error %}
+        <div
+            style="background: #fef2f2; border: 1px solid #fee2e2; color: #b91c1c; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left; font-size: 0.9rem;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/register" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role">
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                style="width: 100%; justify-content: center; padding: 0.8rem; font-weight: 600;">
+                Register Now
+            </button>
+        </form>
+
+        <div style="margin-top: 2rem; font-size: 0.85rem; color: #6b7280;">
+            <p>Already have an account? <a href="{{ url_for('index') }}"
+                    style="color: #0d9488; font-weight: 600; text-decoration: none;">Login here</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>

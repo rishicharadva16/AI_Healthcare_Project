@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthAI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span data-i18n="app-name">HealthAI</span>
+            </div>
+
+            <!-- Language Switcher -->
+            <div class="lang-switcher">
+                <button class="lang-btn active" onclick="changeLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="changeLanguage('hi')">हिं</button>
+                <button class="lang-btn" onclick="changeLanguage('gu')">ગુજ</button>
+            </div>
+
+            <div class="user-info">
+                <div class="avatar">{{ user.username[0].upper() }}</div>
+                <div class="details">
+                    <p class="name">{{ user.username }}</p>
+                    <p class="role">{{ user.role|capitalize }}</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="switchTab('diagnosis')">
+                    <i class="fa-solid fa-stethoscope"></i> <span data-i18n="nav-diagnosis">Diagnosis</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('explain')">
+                    <i class="fa-solid fa-book-medical"></i> <span data-i18n="nav-explain">Explain Disease</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('report')">
+                    <i class="fa-solid fa-file-medical"></i> <span data-i18n="nav-report">Medical Report</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('image')">
+                    <i class="fa-solid fa-camera"></i> <span data-i18n="nav-image">Image Analysis</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('dictionary')">
+                    <i class="fa-solid fa-language"></i> <span data-i18n="nav-dictionary">Dictionary</span>
+                </button>
+                <button class="nav-item" onclick="switchTab('history')">
+                    <i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="nav-history">Patient History</span>
+                </button>
+
+                <hr style="margin: 1rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+                <button class="nav-item" id="theme-toggle">
+                    <i class="fa-solid fa-moon"></i> <span data-i18n="nav-theme">Dark Mode</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="{{ url_for('logout') }}" class="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Tab: Diagnosis -->
+            <section id="diagnosis" class="tab-content active">
+                <header class="section-header">
+                    <h1 data-i18n="diag-title">Symptom Checker</h1>
+                    <p data-i18n="diag-subtitle">Select symptoms or use voice input to get an AI-powered screening.</p>
+                </header>
+
+                <div class="diagnosis-container">
+                    <!-- Input Area -->
+                    <div class="card input-card">
+
+                        <!-- Voice Settings -->
+                        <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem;">
+                            <label style="font-size: 0.9rem; font-weight: 500;" data-i18n="voice-lang-label">Voice
+                                Language:</label>
+                            <select id="voice-lang"
+                                style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-main);">
+                                <option value="en-IN">English (India)</option>
+                                <option value="hi-IN">Hindi (हिंदी)</option>
+                                <option value="gu-IN">Gujarati (ગુજરાતી)</option>
+                            </select>
+                        </div>
+
+                        <!-- Search & Manual Dropdown -->
+                        <div class="symptom-input-wrapper">
+                            <input type="text" id="symptom-search" list="symptom-list-manual"
+                                data-i18n-placeholder="search-placeholder"
+                                placeholder="Type to search or select symptoms manually...">
+                            <datalist id="symptom-list-manual">
+                                {% for sym in symptoms %}
+                                <option value="{{ sym }}">
+                                    {% endfor %}
+                            </datalist>
+                            <button id="voice-btn" class="icon-btn" title="Use Voice Input">
+                                <i class="fa-solid fa-microphone"></i>
+                            </button>
+                        </div>
+
+                        <!-- Spoken Text Display -->
+                        <div id="spoken-text-display" class="message-card hidden"
+                            style="margin-top: 1rem; border-style: dashed;"></div>
+
+                        <div id="symptom-suggestions" class="suggestions-list hidden"></div>
+
+                        <div class="selected-symptoms" id="selected-list">
+                            <!-- Chips go here -->
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="startDiagnosis()">
+                                <i class="fa-solid fa-magnifying-glass"></i> <span
+                                    data-i18n="btn-diagnose">Diagnose</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearSymptoms()"
+                                data-i18n="btn-clear">Clear</button>
+                            <button class="btn btn-secondary" onclick="window.location.reload()" title="Refresh Page">
+                                <i class="fa-solid fa-rotate-right"></i> <span data-i18n="btn-refresh">Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Question / Result Area -->
+                    <div id="interaction-area" class="card result-card hidden">
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Explain -->
+            <section id="explain" class="tab-content">
+                <header class="section-header">
+                    <h1 data-i18n="explain-title">Disease Explanation</h1>
+                    <p data-i18n="explain-subtitle">Get detailed, easy-to-understand explanations.</p>
+                </header>
+
+                <div class="card">
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label style="font-weight: 500; margin-bottom: 0.5rem; display: block;">Disease / Condition
+                            Name</label>
+                        <div style="position: relative;">
+                            <i class="fa-solid fa-search"
+                                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                            <input type="text" id="explain-disease-input"
+                                placeholder="e.g. Malaria (Auto-filled after diagnosis)" class="form-input"
+                                style="padding-left: 2.5rem;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                        <button class="btn btn-outline"
+                            style="height: auto; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;"
+                            onclick="explainDisease('English')">
+                            <span style="font-size: 2rem;">🇬🇧</span>
+                            <span style="font-weight: 600;">English</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Simple explanation</span>
+                        </button>
+                        <button class="btn btn-outline"
+                            style="height: auto; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;"
+                            onclick="explainDisease('Gujarati')">
+                            <span style="font-size: 2rem;">🇮🇳</span>
+                            <span style="font-weight: 600;">Gujarati</span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">સરળ સમજૂતી</span>
+                        </button>
+                    </div>
+
+                    <div id="explain-result-container" class="hidden">
+                        <div class="message-card" style="border-left: 4px solid var(--accent-color);">
+                            <h3 style="margin-bottom: 1rem; color: var(--primary-dark);">Explanation</h3>
+                            <div id="explain-result" style="line-height: 1.6; font-size: 1.05rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: Report -->
+            <section id="report" class="tab-content">
+                <header class="section-header">
+                    <h1>Medical Report</h1>
+                    <p>Generate a professional medical screening report.</p>
+                </header>
+                <div class="card">
+                    <input type="text" id="report-disease-input" placeholder="Enter disease name (or diagnose first)"
+                        class="form-input" style="margin-bottom: 1.5rem;">
+
+                    <div class="lang-selection-report" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="btn btn-outline lang-rpt-btn active" id="rpt-en"
+                            onclick="selectReportLang('English')">
+                            <span>🇬🇧</span> English
+                        </button>
+                        <button class="btn btn-outline lang-rpt-btn" id="rpt-hi" onclick="selectReportLang('Hindi')">
+                            <span>🇮🇳</span> Hindi
+                        </button>
+                        <button class="btn btn-outline lang-rpt-btn" id="rpt-gu" onclick="selectReportLang('Gujarati')">
+                            <span>🇮🇳</span> Gujarati
+                        </button>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        <i class="fa-solid fa-file-pdf"></i> <span data-i18n="btn-download-report">Download
+                            Report</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tab: Image -->
+            <section id="image" class="tab-content">
+                <header class="section-header">
+                    <h1>Image Analysis</h1>
+                    <p>Upload a medical scan or report for AI analysis.</p>
+                </header>
+                <div class="card">
+                    <div class="upload-area" id="drop-zone">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Drag & drop or click to upload</p>
+                        <input type="file" id="image-upload" accept="image/*" hidden>
+                    </div>
+                    <div id="image-preview-area" class="hidden">
+                        <img id="image-preview" src="" alt="Preview">
+                    </div>
+                    <button class="btn btn-primary" onclick="analyzeImage()">Analyze Image</button>
+                    <div id="image-result" class="result-box hidden"></div>
+                </div>
+            </section>
+
+            <!-- Tab: Dictionary -->
+            <section id="dictionary" class="tab-content">
+                <header class="section-header">
+                    <h1>Medical Dictionary</h1>
+                    <p>Translations for medical terms.</p>
+                </header>
+                <div class="card">
+                    <input type="text" id="dict-search" placeholder="Search term..." class="form-input"
+                        onkeyup="filterDictionary()">
+                    <div class="table-wrapper">
+                        <table id="dict-table">
+                            <thead>
+                                <tr>
+                                    <th>English</th>
+                                    <th>Hindi</th>
+                                    <th>Gujarati</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dict-body">
+                                <tr>
+                                    <td colspan="3">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab: History -->
+            <section id="history" class="tab-content">
+                <header class="section-header">
+                    <h1 data-i18n="history-title">Patient History</h1>
+                    <p data-i18n="history-subtitle">View your previous diagnostic records.</p>
+                </header>
+                <div class="card">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="th-date">Date</th>
+                                    <th data-i18n="th-symptoms">Symptoms</th>
+                                    <th data-i18n="th-disease">Disease</th>
+                                    <th data-i18n="th-confidence">Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-body">
+                                <tr>
+                                    <td colspan="4" data-i18n="loading">Loading history...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Pass Python list to JS -->
+    <script>
+        const ALL_SYMPTOMS = {{ symptoms | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Inline JS for immediate interaction if needed, but mostly in script.js
+        // We will create script.js next.
+    </script>
+</body>
+
+</html>

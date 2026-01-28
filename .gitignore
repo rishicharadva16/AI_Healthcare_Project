@@ -1,0 +1,7 @@
+__pycache__/
+*.pkl
+!label_encoder.pkl
+*.pyc
+env/
+venv/
+.env

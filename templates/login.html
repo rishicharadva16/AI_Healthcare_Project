@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthAI - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url("{{ url_for('static', filename='images/login_bg.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.4);
+            /* Subtle white overlay to keep text readable */
+            z-index: -1;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .app-logo {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <i class="fa-solid fa-heart-pulse app-logo"></i>
+        <h1 style="margin-bottom: 0.5rem; font-size: 1.5rem;">Welcome Back</h1>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Sign in to access your health dashboard</p>
+
+        {% if error %}
+        <div class="message-card warning" style="text-align: left; font-size: 0.9rem;">{{ error }}</div>
+        {% endif %}
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="message-card success"
+            style="text-align: left; font-size: 0.9rem; background: #ecfdf5; color: #10b981; border-color: #34d399;">{{
+            message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form action="/login" method="POST" style="text-align: left;">
+            <div style="margin-bottom: 1.2rem;">
+                <label for="username" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label for="password" style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                Login
+            </button>
+        </form>
+
+        <div style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted);">
+            <p>Don't have an account? <a href="{{ url_for('register') }}"
+                    style="color: var(--primary-color); font-weight: 600; text-decoration: none;">Register here</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>
