@@ -74,7 +74,7 @@ except Exception as e:
 import google.generativeai as genai
 
 # --- AI CONFIG ---
-GEMINI_API_KEY = "AIzaSyCo7h3NN6jt00Wi8qqNlmwWqAmTctAZmk0"
+GEMINI_API_KEY = ""
 genai.configure(api_key=GEMINI_API_KEY)
 chat_model = genai.GenerativeModel('gemini-1.5-flash')
 print("AI Model Initialized: Gemini 1.5 Flash")
